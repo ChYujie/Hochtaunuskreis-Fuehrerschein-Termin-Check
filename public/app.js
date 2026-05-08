@@ -26,8 +26,8 @@ async function registerPush() {
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return null;
 
-  const registration = await navigator.serviceWorker.register("/sw.js");
-  const { publicKey } = await fetch("/api/push-key").then((response) => response.json());
+  const registration = await navigator.serviceWorker.register("./sw.js");
+  const { publicKey } = await fetch("./api/push-key").then((response) => response.json());
   return registration.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: base64ToUint8Array(publicKey)
@@ -73,12 +73,12 @@ function renderState(state) {
 async function refresh() {
   let state;
   try {
-    const response = await fetch("/api/status");
+    const response = await fetch("./api/status");
     if (!response.ok) throw new Error("No backend API");
     state = await response.json();
     staticMode = false;
   } catch {
-    const response = await fetch(`/status.json?ts=${Date.now()}`);
+    const response = await fetch(`./status.json?ts=${Date.now()}`);
     state = await response.json();
     staticMode = true;
   }
@@ -97,7 +97,7 @@ form.addEventListener("submit", async (event) => {
   setStatus("Starting");
   message.textContent = "Registering notifications and checking Terminland now...";
   const pushSubscription = await registerPush();
-  const response = await fetch("/api/subscribe", {
+  const response = await fetch("./api/subscribe", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -121,7 +121,7 @@ checkNow.addEventListener("click", async () => {
     return;
   }
   setStatus("Checking");
-  const state = await fetch("/api/check-now", { method: "POST" }).then((response) => response.json());
+  const state = await fetch("./api/check-now", { method: "POST" }).then((response) => response.json());
   renderState(state);
 });
 
@@ -132,7 +132,7 @@ unsubscribeButton.addEventListener("click", async () => {
     message.textContent = "Local email field cleared. Remove ALERT_EMAIL in GitHub Secrets to stop hosted email alerts.";
     return;
   }
-  await fetch("/api/unsubscribe", {
+  await fetch("./api/unsubscribe", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: emailInput.value })
