@@ -1,4 +1,4 @@
-# Hochtaunuskreis Appointment Watch
+# Hochtaunuskreis Führerschein Termin Check
 
 Small web app that checks the Hochtaunuskreis Terminland flow once per minute:
 
