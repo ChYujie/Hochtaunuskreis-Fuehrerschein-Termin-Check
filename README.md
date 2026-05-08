@@ -1,23 +1,53 @@
 # Hochtaunuskreis Führerschein Termin Check
 
-Small web app that checks the Hochtaunuskreis Terminland flow once per minute:
+Checks the Hochtaunuskreis Terminland flow:
 
 1. `Führerschein`
 2. `Abholung Führerschein nach Prüfung oder Umschreibung`
 3. first quantity/person option
 4. appointment list
 
-Visitors enter an email address in the web UI. The app stores the subscriber locally, checks Terminland in the background, and sends email plus browser push notifications every check with the latest earliest appointment.
+## Free GitHub Hosting
 
-## Run
+This repo now supports a GitHub-only free setup:
+
+- GitHub Pages hosts the web page.
+- GitHub Actions checks appointments on a schedule.
+- The latest result is published to `public/status.json`.
+- Email alerts can be sent with the Resend free tier.
+
+Limitations:
+
+- GitHub Actions schedules are every 5 minutes here, not every minute.
+- Browser push notifications are not available in the free GitHub-only version because there is no always-running backend.
+- The GitHub Pages form cannot save subscribers. Put the alert email in the repository secret `ALERT_EMAIL`.
+
+## Enable GitHub Pages
+
+In the GitHub repository:
+
+1. Go to `Settings` -> `Pages`.
+2. Under `Build and deployment`, choose `GitHub Actions`.
+3. Go to `Actions`.
+4. Run the `Appointment monitor` workflow once manually.
+
+After the workflow finishes, GitHub will show the Pages URL.
+
+## Email Alerts
+
+For free email alerts, create a Resend API key and add these repository secrets:
 
 ```bash
-node src/server.js
+RESEND_API_KEY=your-resend-api-key
+ALERT_EMAIL=your-email@example.com
+EMAIL_FROM=Appointment Watch <onboarding@resend.dev>
 ```
 
-Open `http://localhost:3000`.
+`EMAIL_FROM` is optional. The default is Resend's onboarding sender. For production use, Resend may ask you to verify a sender/domain.
 
-For a normal Node setup with npm available:
+## Local Run
+
+The original local web app still works:
 
 ```bash
 npm install
@@ -25,9 +55,9 @@ npx playwright install chromium
 npm start
 ```
 
-## Email
+Open `http://localhost:3000`.
 
-Copy `.env.example` values into your environment and provide SMTP credentials. The built-in sender expects TLS SMTP on port `465`.
+For local SMTP email, copy `.env.example` values into your environment and provide SMTP credentials:
 
 ```bash
 SMTP_HOST=smtp.example.com
@@ -37,44 +67,4 @@ SMTP_PASS=your-password
 SMTP_FROM="Appointment Watch <alerts@example.com>"
 ```
 
-If SMTP is not configured, the app still runs and logs email notifications to the server console.
-
-To avoid repeated notifications when the earliest appointment has not changed, set:
-
-```bash
-NOTIFY_EVERY_CHECK=false
-```
-
-## Deploy On Koyeb
-
-This repo includes a `Dockerfile` based on Microsoft's Playwright image, so Chromium and the system libraries needed by the Terminland checker are available in production.
-
-1. Push this repo to GitHub.
-2. In Koyeb, create a new Web Service.
-3. Choose GitHub as the source and select this repository.
-4. Choose Dockerfile deployment.
-5. Use port `3000`.
-6. Set the health check path to `/healthz`.
-7. Add environment variables:
-
-```bash
-PORT=3000
-BASE_URL=https://your-koyeb-app-url.koyeb.app
-CHECK_INTERVAL_MS=60000
-NOTIFY_EVERY_CHECK=true
-SMTP_HOST=smtp.example.com
-SMTP_PORT=465
-SMTP_USER=your-user
-SMTP_PASS=your-password
-SMTP_FROM="Appointment Watch <alerts@example.com>"
-```
-
-After deploy, open the Koyeb URL, enter your email, and allow browser notifications.
-
-## Data
-
-Local runtime data is stored in `data/`:
-
-- `subscribers.json`
-- `state.json`
-- `vapid.json` after the first browser push setup
+Local runtime data is stored in `data/` and ignored by Git.
