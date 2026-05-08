@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hochtaunuskreis Appointment Watch</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <div class="title-row">
+          <div>
+            <p class="eyebrow">Hochtaunuskreis Führerschein</p>
+            <h1>Appointment Watch</h1>
+          </div>
+          <span id="statusPill" class="pill">Starting</span>
+        </div>
+
+        <form id="subscribeForm" class="form">
+          <label for="email">Email alerts</label>
+          <div class="input-row">
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+            <button type="submit">Start</button>
+          </div>
+          <label class="toggle">
+            <input id="pushToggle" type="checkbox" checked />
+            <span>Also send browser notifications</span>
+          </label>
+        </form>
+
+        <div class="actions">
+          <button id="checkNow" type="button">Check now</button>
+          <button id="unsubscribe" type="button" class="secondary">Stop alerts</button>
+        </div>
+      </section>
+
+      <section class="status-grid">
+        <article class="metric">
+          <span>Earliest appointment</span>
+          <strong id="earliest">Unknown</strong>
+        </article>
+        <article class="metric">
+          <span>Last checked</span>
+          <strong id="checkedAt">Never</strong>
+        </article>
+        <article class="metric">
+          <span>Available slots</span>
+          <strong id="count">0</strong>
+        </article>
+      </section>
+
+      <section class="list-panel">
+        <div class="section-head">
+          <h2>Available times</h2>
+          <a href="https://www.terminland.de/hochtaunuskreis/" target="_blank" rel="noreferrer">Open Terminland</a>
+        </div>
+        <ol id="appointments" class="appointments"></ol>
+        <p id="message" class="message"></p>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
