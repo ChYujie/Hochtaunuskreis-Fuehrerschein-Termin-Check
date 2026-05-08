@@ -58,6 +58,11 @@ const server = http.createServer(async (request, response) => {
       return;
     }
 
+    if (request.method === "GET" && url.pathname === "/healthz") {
+      sendJson(response, 200, { ok: true });
+      return;
+    }
+
     if (request.method === "GET" && url.pathname === "/api/push-key") {
       const keys = await getVapidKeys();
       sendJson(response, 200, { publicKey: keys.publicKey });
